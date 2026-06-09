@@ -11,27 +11,28 @@
                 <div class="p-6 text-gray-900">
                     
                     @if(session('success'))
-                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative font-medium">
-                            {{ session('success') }}
-                        </div>
+                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-sm font-bold shadow-sm">{{ session('success') }}</div>
+                    @endif
+                    @if(session('error'))
+                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm font-bold shadow-sm">{{ session('error') }}</div>
                     @endif
 
-                    <div class="mb-6 flex justify-between items-center">
-                        <h3 class="font-bold text-lg text-gray-700">Daftar Antrean Surat</h3>
-                        <a href="{{ route('admin.pemrosesan.create_offline') }}" class="inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-md hover:bg-indigo-700 transition font-bold text-sm shadow-md">
-                            + Buat Pengajuan Warga (Walk-in / Offline)
-                        </a>
+                    <div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <form method="GET" action="{{ route('admin.pemrosesan.index') }}" class="flex w-full md:w-1/2 gap-2">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nama / NIK / No Surat..." class="rounded-md border-gray-300 w-full shadow-sm text-sm">
+                            <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-md font-bold text-sm shadow-sm hover:bg-gray-700">Cari</button>
+                        </form>
+                        <a href="{{ route('admin.pemrosesan.create_offline') }}" class="bg-gray-600 text-white px-5 py-2.5 rounded-md hover:bg-indigo-700 transition font-bold text-sm shadow-md whitespace-nowrap">+ Buat Pengajuan (Offline)</a>
                     </div>
 
                     <div class="overflow-x-auto border border-gray-200 rounded-lg">
                         <table class="min-w-full table-auto border-collapse">
                             <thead class="bg-gray-50 border-b">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Pemohon</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Jenis Surat</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tanggal Masuk</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Pemohon</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Surat & Nomor</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase">Status</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase">Aksi Berdasarkan Status</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -40,48 +41,82 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-bold text-gray-900">{{ $p->penduduk->nama_lengkap ?? '-' }}</div>
                                         <div class="text-xs text-gray-500">NIK: {{ $p->penduduk->nik ?? '-' }}</div>
-                                        <div class="text-xs mt-1 font-bold {{ $p->jenis_pengajuan == 'online' ? 'text-blue-600' : 'text-indigo-600' }}">
-                                            Via: {{ strtoupper($p->jenis_pengajuan) }}
-                                        </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                        {{ $p->template->nama_surat ?? 'Template Telah Dihapus' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $p->created_at->format('d M Y, H:i') }}
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-bold text-blue-800">{{ $p->template->nama_surat ?? 'Dihapus' }}</div>
+                                        <div class="text-xs text-gray-500 font-medium mt-1">No: {{ $p->nomor_surat ?? 'Belum Drafting' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                                        @if($p->status == 'menunggu')
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">Menunggu</span>
-                                        @elseif($p->status == 'diproses')
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Diproses</span>
-                                        @elseif($p->status == 'selesai')
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">Selesai</span>
-                                        @elseif($p->status == 'dibatalkan')
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">Dibatalkan</span>
+                                        @if($p->status == 'pengajuan_baru')
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">Pengajuan Baru</span>
+                                        @elseif($p->status == 'sedang_diproses')
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Sedang Diproses</span>
+                                        @elseif($p->status == 'dikembalikan')
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">Dikembalikan</span>
+                                        @elseif($p->status == 'menunggu_ttd')
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">Menunggu TTD</span>
+                                        @elseif($p->status == 'siap_diambil')
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">Siap Diambil</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <a href="{{ route('admin.pemrosesan.edit', $p->id) }}" class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition font-medium text-xs shadow-sm">
-                                            Proses Berkas
-                                        </a>
+                                        
+                                        @if($p->status == 'pengajuan_baru')
+                                            <a href="{{ route('admin.pemrosesan.verifikasi', $p->id) }}" class="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm">Verifikasi Dokumen</a>
+                                        
+                                        @elseif($p->status == 'sedang_diproses')
+                                            <a href="{{ route('admin.pemrosesan.drafting', $p->id) }}" class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm">Proses Selesai (Drafting)</a>
+
+                                        @elseif($p->status == 'dikembalikan')
+                                            <button onclick="alert('Catatan ke Warga: \n\n{{ addslashes($p->catatan_koreksi) }}')" class="text-white bg-gray-600 hover:bg-gray-700 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm">Lihat Catatan Koreksi</button>
+
+                                        @elseif($p->status == 'menunggu_ttd')
+                                            <a href="{{ route('admin.pemrosesan.unduh_draft', $p->id) }}" class="text-white bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm mr-2">1. Unduh Draft</a>
+                                            
+                                            <button onclick="document.getElementById('modal-konfirmasi-{{ $p->id }}').classList.remove('hidden')" class="text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm">2. Selesaikan Proses</button>
+
+                                            <div id="modal-konfirmasi-{{ $p->id }}" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 h-full w-full z-50 flex items-center justify-center">
+                                                <div class="relative p-6 border shadow-2xl rounded-lg bg-white w-full max-w-md text-left" x-data="{ captcha: '' }">
+                                                    <h3 class="text-lg font-bold mb-2 text-red-600 border-b pb-2">Konfirmasi Selesaikan Proses!</h3>
+                                                    <p class="text-xs text-gray-600 mb-4 whitespace-normal">Peringatan: Pastikan draf surat telah disetujui dan ditandatangani. Ketikkan kata <b class="text-red-600">KONFIRMASI</b> (huruf besar semua) di bawah ini untuk melanjutkan.</p>
+                                                    
+                                                    <form action="{{ route('admin.pemrosesan.selesai_ttd', $p->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="text" name="konfirmasi" x-model="captcha" placeholder="Ketik: KONFIRMASI" class="w-full mb-5 border-gray-300 rounded text-sm text-center font-bold tracking-widest uppercase">
+                                                        <div class="flex justify-end space-x-3">
+                                                            <button type="button" onclick="document.getElementById('modal-konfirmasi-{{ $p->id }}').classList.add('hidden')" class="px-4 py-2 bg-gray-200 font-bold rounded text-sm">Batal</button>
+                                                            <button type="submit" :disabled="captcha !== 'KONFIRMASI'" :class="captcha === 'KONFIRMASI' ? 'bg-green-600 hover:bg-green-700' : 'bg-green-300 cursor-not-allowed'" class="px-4 py-2 text-white font-bold rounded text-sm transition">Ya, Lanjut</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        @elseif($p->status == 'siap_diambil')
+                                            <button onclick="document.getElementById('modal-gdrive-{{ $p->id }}').classList.remove('hidden')" class="text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-md font-bold text-xs shadow-sm">Unggah Surat (Final)</button>
+
+                                            <div id="modal-gdrive-{{ $p->id }}" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 h-full w-full z-50 flex items-center justify-center">
+                                                <div class="relative p-6 border shadow-2xl rounded-lg bg-white w-full max-w-md text-left">
+                                                    <h3 class="text-lg font-bold mb-2 border-b pb-2">Upload Surat Akhir (Google Drive)</h3>
+                                                    <form action="{{ route('admin.pemrosesan.upload_gdrive', $p->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="url" name="link_gdrive" value="{{ $p->link_gdrive }}" required placeholder="https://drive.google.com/..." class="w-full mb-4 border-gray-300 rounded text-sm">
+                                                        <div class="flex justify-end space-x-3">
+                                                            <button type="button" onclick="document.getElementById('modal-gdrive-{{ $p->id }}').classList.add('hidden')" class="px-4 py-2 bg-gray-200 font-bold rounded text-sm">Batal</button>
+                                                            <button type="submit" class="px-4 py-2 bg-purple-600 text-white font-bold rounded text-sm">Simpan Link</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        @endif
+
                                     </td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
-                                        Belum ada data pengajuan surat masuk.
-                                    </td>
-                                </tr>
+                                <tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">Belum ada data.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="mt-6">
-                        {{ $pengajuans->links() }}
-                    </div>
-
                 </div>
             </div>
         </div>

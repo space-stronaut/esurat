@@ -83,7 +83,7 @@ class PengajuanController extends Controller
         $penduduk = $pengajuan->penduduk;
 
         // 3. Suntikkan Data Otomatis (Termasuk Nomor Surat)
-        $templateProcessor->setValue('nomor_surat', $pengajuan->nomor_surat ?? '-');
+        $templateProcessor->setValue('statis.nomor_surat', $pengajuan->nomor_surat ?? '-');
         $templateProcessor->setValue('statis.nama_lengkap', $penduduk->nama_lengkap);
         $templateProcessor->setValue('statis.nik', $penduduk->nik);
         $templateProcessor->setValue('statis.tempat_lahir', $penduduk->tempat_lahir);
@@ -111,5 +111,40 @@ class PengajuanController extends Controller
 
         // Download ke browser pengguna, lalu hapus file sementaranya dari server
         return response()->download($tempPath)->deleteFileAfterSend(true);
+    }
+
+    public function edit(PengajuanSurat $pengajuan)
+    {
+        if ($pengajuan->user_id !== Auth::id() || $pengajuan->status !== 'dikembalikan') {
+            abort(403);
+        }
+        return view('user.pengajuan.edit', compact('pengajuan'));
+    }
+
+    public function update(Request $request, PengajuanSurat $pengajuan)
+    {
+        // 1. Ambil data lama
+        $lampiran = $pengajuan->lampiran_syarat;
+        $syaratKeys = json_decode($request->syarat_dokumen_keys, true);
+
+        // 2. Loop jika ada file baru di-upload
+        foreach ($syaratKeys as $index => $syarat) {
+            if ($request->hasFile("file_lampiran_{$index}")) {
+                $path = $request->file("file_lampiran_{$index}")->store('lampiran_syarat', 'public');
+                $lampiran[$syarat] = ['tipe' => 'file', 'path' => $path];
+            } elseif ($request->filled("link_lampiran_{$index}")) {
+                $lampiran[$syarat] = ['tipe' => 'link', 'path' => $request->input("link_lampiran_{$index}")];
+            }
+        }
+
+        // 3. Update Database
+        $pengajuan->update([
+            'isian_dinamis' => $request->parameter_dinamis,
+            'lampiran_syarat' => $lampiran,
+            'status' => 'pengajuan_baru', // Reset agar admin verifikasi lagi
+            'catatan_koreksi' => null
+        ]);
+
+        return redirect()->route('user.pengajuan.index')->with('success', 'Perbaikan berhasil dikirim!');
     }
 }

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\PengajuanSurat;
 use App\Models\Penduduk;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class PengajuanService
@@ -17,7 +16,7 @@ class PengajuanService
             $penduduk = Penduduk::where('nik', $user->nik)->first();
             if (!$penduduk) {
                 throw ValidationException::withMessages([
-                    'error' => 'Gagal mengajukan surat. NIK Anda (' . $user->nik . ') tidak ditemukan di Master Data Penduduk. Silakan hubungi Admin.'
+                    'error' => 'Gagal mengajukan surat. NIK Anda (' . $user->nik . ') tidak ditemukan di Master Data Penduduk.'
                 ]);
             }
             $pendudukId = $penduduk->id;
@@ -29,13 +28,23 @@ class PengajuanService
         $syaratDokumen = json_decode($request->syarat_dokumen_keys, true) ?? [];
 
         foreach ($syaratDokumen as $index => $syarat) {
-            $inputType = $request->input("tipe_lampiran_{$index}");
-            
-            if ($inputType === 'file' && $request->hasFile("file_lampiran_{$index}")) {
-                $path = $request->file("file_lampiran_{$index}")->store('lampiran_syarat', 'public');
-                $lampiran[$syarat] = ['tipe' => 'file', 'path' => $path];
-            } elseif ($inputType === 'link' && $request->filled("link_lampiran_{$index}")) {
-                $lampiran[$syarat] = ['tipe' => 'link', 'path' => $request->input("link_lampiran_{$index}")];
+            // JIKA ONLINE: Wajib Upload File / Link
+            if ($jenis === 'online') {
+                $inputType = $request->input("tipe_lampiran_{$index}");
+                if ($inputType === 'file' && $request->hasFile("file_lampiran_{$index}")) {
+                    $path = $request->file("file_lampiran_{$index}")->store('lampiran_syarat', 'public');
+                    $lampiran[$syarat] = ['tipe' => 'file', 'path' => $path];
+                } elseif ($inputType === 'link' && $request->filled("link_lampiran_{$index}")) {
+                    $lampiran[$syarat] = ['tipe' => 'link', 'path' => $request->input("link_lampiran_{$index}")];
+                }
+            } 
+            // JIKA OFFLINE: Hanya Verifikasi Fisik (Centang)
+            else {
+                $isVerified = $request->has("verifikasi_dokumen_{$index}");
+                $lampiran[$syarat] = [
+                    'tipe' => 'verifikasi_fisik', 
+                    'status' => $isVerified ? 'Telah Diverifikasi Fisik' : 'Tidak Dibawa'
+                ];
             }
         }
 
@@ -51,7 +60,7 @@ class PengajuanService
             'jenis_pengajuan' => $jenis,
             'isian_dinamis' => $isianDinamis,
             'lampiran_syarat' => $lampiran,
-            'status' => 'menunggu',
+            'status' => 'pengajuan_baru',
         ]);
     }
 
@@ -59,18 +68,12 @@ class PengajuanService
     {
         $data = ['status' => $request->status];
 
-        // LOGIKA PENOMORAN OTOMATIS (Tanpa upload file)
+        // LOGIKA PENOMORAN OTOMATIS
         if ($request->status === 'selesai') {
             if (!$pengajuan->nomor_surat) {
-                // Hitung urutan surat yang selesai tahun ini
-                $countSelesai = PengajuanSurat::where('status', 'selesai')
-                                ->whereYear('updated_at', date('Y'))
-                                ->count();
-                
+                $countSelesai = PengajuanSurat::where('status', 'selesai')->whereYear('updated_at', date('Y'))->count();
                 $urutan = str_pad($countSelesai + 1, 3, '0', STR_PAD_LEFT);
                 $formatBaku = $pengajuan->template->format_nomor_baku ?? '/Kec/'.date('Y');
-                
-                // Gabungkan menjadi nomor surat resmi
                 $data['nomor_surat'] = $urutan . $formatBaku;
             }
         }

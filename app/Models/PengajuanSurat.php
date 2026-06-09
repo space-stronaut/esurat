@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,16 +11,14 @@ class PengajuanSurat extends Model
 
     protected $fillable = [
         'penduduk_id', 'surat_template_id', 'user_id', 'jenis_pengajuan',
-        'isian_dinamis', 'lampiran_syarat', 'status', 'nomor_surat', 'file_hasil'
+        'isian_dinamis', 'lampiran_syarat', 'status', 'nomor_surat', 'file_hasil',
+        'tanggal_surat', 'link_gdrive', 'catatan_koreksi' // <--- Tambahan Revisi
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'isian_dinamis' => 'array',
-            'lampiran_syarat' => 'array',
-        ];
-    }
+    protected $casts = [
+        'isian_dinamis' => 'array',
+        'lampiran_syarat' => 'array',
+    ];
 
     public function penduduk() { return $this->belongsTo(Penduduk::class); }
     public function template() { return $this->belongsTo(SuratTemplate::class, 'surat_template_id'); }

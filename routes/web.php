@@ -93,13 +93,26 @@ Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(fu
 // ...
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     // ...
-    Route::resource('pemrosesan', PemrosesanSuratController::class)->only(['index', 'edit', 'update']);
+    // MANAJEMEN PEMROSESAN SURAT (ALUR BARU)
+    Route::get('pemrosesan', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'index'])->name('pemrosesan.index');
     
-    // ROUTE BARU UNTUK GENERATE DOCX
-    Route::get('pemrosesan/{pemrosesan}/generate-docx', [PemrosesanSuratController::class, 'generateDocx'])->name('pemrosesan.generate_docx');
-    Route::get('pengajuan-offline/create', [PemrosesanSuratController::class, 'createOffline'])->name('pemrosesan.create_offline');
-    Route::post('pengajuan-offline/store', [PemrosesanSuratController::class, 'storeOffline'])->name('pemrosesan.store_offline');
-    Route::get('pengajuan-offline/get-template/{id}', [PemrosesanSuratController::class, 'getTemplateData']);
+    // Tahap 1: Verifikasi
+    Route::get('pemrosesan/{pemrosesan}/verifikasi', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'verifikasi'])->name('pemrosesan.verifikasi');
+    Route::post('pemrosesan/{pemrosesan}/verifikasi', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'processVerifikasi'])->name('pemrosesan.process_verifikasi');
+    
+    // Tahap 2: Drafting
+    Route::get('pemrosesan/{pemrosesan}/drafting', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'drafting'])->name('pemrosesan.drafting');
+    Route::post('pemrosesan/{pemrosesan}/drafting', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'processDrafting'])->name('pemrosesan.process_drafting');
+    
+    // Tahap 3: Menunggu TTD & Selesai
+    Route::get('pemrosesan/{pemrosesan}/unduh-draft', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'unduhDraft'])->name('pemrosesan.unduh_draft');
+    Route::post('pemrosesan/{pemrosesan}/selesai-ttd', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'selesaiTtd'])->name('pemrosesan.selesai_ttd');
+    Route::post('pemrosesan/{pemrosesan}/upload-final', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'uploadGdrive'])->name('pemrosesan.upload_gdrive');
+
+    // Pengajuan Offline (Biarkan seperti sebelumnya)
+    Route::get('pengajuan-offline/create', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'createOffline'])->name('pemrosesan.create_offline');
+    Route::post('pengajuan-offline/store', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'storeOffline'])->name('pemrosesan.store_offline');
+    Route::get('pengajuan-offline/get-template/{id}', [\App\Http\Controllers\Admin\PemrosesanSuratController::class, 'getTemplateData']);
 });
 
 /* |--------------------------------------------------------------------------
@@ -114,6 +127,10 @@ Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
     
     // PASTIKAN BARIS INI ADA AGAR FORM WARGA BISA MUNCUL:
     Route::get('pengajuan/get-template/{id}', [\App\Http\Controllers\User\PengajuanController::class, 'getTemplateData']);
+
+    Route::get('pengajuan/{pengajuan}/perbaiki', [\App\Http\Controllers\User\PengajuanController::class, 'edit'])->name('pengajuan.edit');
+    Route::put('pengajuan/{pengajuan}/perbaiki', [\App\Http\Controllers\User\PengajuanController::class, 'update'])->name('pengajuan.update');
+    
 });
 
 

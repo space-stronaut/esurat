@@ -28,11 +28,13 @@ class SuratTemplateController extends Controller
 
     public function store(Request $request)
     {
+
+        // dd($request);
         // Validasi parameter_dinamis DIHAPUS karena sekarang di-generate otomatis oleh PhpWord
         $request->validate([
             'nama_surat' => 'required|string|max:255',
             'file_template' => 'required|file|mimes:docx|max:5120', // Maks 5MB
-            'format_nomor_baku' => 'nullable|string|max:100',
+            'format_nomor_baku' => $request->gunakan_nomor == '1' ? 'required|string' : 'nullable',
             'syarat_dokumen' => 'nullable|string',
         ]);
 
