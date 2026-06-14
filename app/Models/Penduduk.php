@@ -19,6 +19,12 @@ class Penduduk extends Model
         'rt',
         'rw',
         'agama',
-        'pekerjaan'
+        'pekerjaan',
+        'no_kk',
+        'goldar',
+        'hub_keluarga',
+        'status_perkawinan',
+        'pendidikan_terakhir',
+        'kewarganegaraan'
     ];
 }

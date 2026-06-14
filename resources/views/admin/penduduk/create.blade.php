@@ -31,6 +31,10 @@
                                 <input type="text" name="nik" value="{{ old('nik') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required maxlength="16" placeholder="Wajib 16 Digit">
                             </div>
                             <div>
+                                <label class="block text-sm font-medium text-gray-700">NO KK</label>
+                                <input type="text" name="nik" value="{{ old('no_kk') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required maxlength="16" placeholder="Wajib 16 Digit">
+                            </div>
+                            <div>
                                 <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                             </div>
@@ -69,6 +73,62 @@
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Pekerjaan</label>
                                 <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Karyawan Swasta">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Golongan Darah</label>
+                                {{-- <input type="text" name="goldar" value="{{ old('goldar') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: A, B"> --}}
+                                <select name="goldar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="A" {{ old('goldar') == 'A' ? 'selected' : '' }}>A</option>
+                                    <option value="B" {{ old('goldar') == 'B' ? 'selected' : '' }}>B</option>
+                                    <option value="AB" {{ old('goldar') == 'AB' ? 'selected' : '' }}>AB</option>
+                                    <option value="O" {{ old('goldar') == 'O' ? 'selected' : '' }}>O</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Hubungan Keluarga</label>
+                                {{-- <input type="text" name="hub_keluarga" value="{{ old('hub_keluarga') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Istri, Kepala Keluarga"> --}}
+                                <select name="hub_keluarga" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Kepala Keluarga" {{ old('hub_keluarga') == 'Kepala Keluarga' ? 'selected' : '' }}>Kepala Keluarga</option>
+                                    <option value="Menantu" {{ old('hub_keluarga') == 'Menantu' ? 'selected' : '' }}>Menantu</option>
+                                    <option value="Cucu" {{ old('hub_keluarga') == 'Cucu' ? 'selected' : '' }}>Cucu</option>
+                                    <option value="Orang Tua" {{ old('hub_keluarga') == 'Orang Tua' ? 'selected' : '' }}>Orang Tua</option>
+                                    <option value="Lainnya" {{ old('hub_keluarga') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Status Perkawinan</label>
+                                {{-- <input type="text" name="status_perkawinan" value="{{ old('status_perkawinan') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Kawin, Belum Menikah"> --}}
+                                <select name="status_perkawinan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
+                                    <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
+                                    <option value="Cerai Hidup" {{ old('status_perkawinan') == 'Cerai Hidup' ? 'selected' : '' }}>Cerai Hidup</option>
+                                    <option value="Cerai Mati" {{ old('status_perkawinan') == 'Cerai Mati' ? 'selected' : '' }}>Cerai Mati</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Pendidikan Terakhir</label>
+                                {{-- <input type="text" name="pendidikan_terakhir" value="{{ old('pendidikan_terakhir') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: SMA, SMP"> --}}
+                                <select name="pendidikan_terakhir" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="SD" {{ old('pendidikan_terakhir') == 'SD' ? 'selected' : '' }}>SD</option>
+                                    <option value="SMP" {{ old('pendidikan_terakhir') == 'SMP' ? 'selected' : '' }}>SMP</option>
+                                    <option value="SMA" {{ old('pendidikan_terakhir') == 'SMA' ? 'selected' : '' }}>SMA</option>
+                                    <option value="S1" {{ old('pendidikan_terakhir') == 'S1' ? 'selected' : '' }}>S1</option>
+                                    <option value="Tidak Sekolah" {{ old('pendidikan_terakhir') == 'Tidak Sekolah' ? 'selected' : '' }}>Tidak Sekolah</option>
+                                    <option value="Lainnya" {{ old('pendidikan_terakhir') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Kewarganegaraan</label>
+                                {{-- <input type="text" name="kewarganegaraan" value="{{ old('kewarganegaraan') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: WNI, WNA"> --}}
+                                <select name="kewarganegaraan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    <option value="WNI" {{ old('kewarganegaraan') == 'WNI' ? 'selected' : '' }}>WNI</option>
+                                    <option value="WNA" {{ old('kewarganegaraan') == 'WNA' ? 'selected' : '' }}>WNA</option>
+                                </select>
                             </div>
                         </div>
 

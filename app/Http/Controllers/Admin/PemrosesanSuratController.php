@@ -20,18 +20,27 @@ class PemrosesanSuratController extends Controller
     }
 
     public function index(Request $request)
-    {
-        $search = $request->search;
-        $pengajuans = PengajuanSurat::with(['penduduk', 'template'])
-            ->when($search, function($q) use ($search) {
-                $q->whereHas('penduduk', function($q) use ($search) {
-                    $q->where('nama_lengkap', 'like', "%{$search}%")->orWhere('nik', 'like', "%{$search}%");
-                })->orWhere('nomor_surat', 'like', "%{$search}%");
-            })
-            ->latest()->paginate(15);
+{
+    $search = $request->search;
+    
+    // Menghitung statistik untuk Card
+    $stats = [
+        'masuk' => \App\Models\PengajuanSurat::count(),
+        'dikembalikan' => \App\Models\PengajuanSurat::where('status', 'dikembalikan')->count(),
+        'menunggu_ttd' => \App\Models\PengajuanSurat::where('status', 'menunggu_ttd')->count(),
+        'selesai' => \App\Models\PengajuanSurat::where('status', 'siap_diambil')->count(),
+    ];
 
-        return view('admin.pemrosesan.index', compact('pengajuans', 'search'));
-    }
+    $pengajuans = \App\Models\PengajuanSurat::with(['penduduk', 'template'])
+        ->when($search, function($q) use ($search) {
+            $q->whereHas('penduduk', function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")->orWhere('nik', 'like', "%{$search}%");
+            });
+        })
+        ->latest()->paginate(15);
+
+    return view('admin.pemrosesan.index', compact('pengajuans', 'stats', 'search'));
+}
 
     // ============================================
     // TAHAP WIZARD 1: VERIFIKASI DOKUMEN

@@ -34,7 +34,7 @@
                     <div x-show="step === 3" style="display:none;" x-transition>
                         <h3 class="text-lg font-bold text-gray-800 mb-4 border-l-4 border-green-500 pl-3">Pengaturan Nomor & Tanggal Surat</h3>
                         <div class="p-5 border border-green-200 bg-green-50 rounded-lg mb-6">
-                            @if($pemrosesan->template->gunakan_nomor)
+                            @if($pemrosesan->template->gunakan_nomor == 1)
                                 <div class="mb-4">
                                     <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Urut Surat (Wajib)</label>
                                     <input type="text" name="nomor_urut" required class="w-full rounded border-gray-300 shadow-sm focus:border-green-500">

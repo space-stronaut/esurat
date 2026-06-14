@@ -39,6 +39,12 @@ class PendudukController extends Controller
             'rw' => 'required|string|max:3',
             'agama' => 'required|string',
             'pekerjaan' => 'required|string',
+            'no_kk' => 'required|string',
+            'goldar' => 'required|string',
+            'hub_keluarga' => 'required|string',
+            'status_perkawinan' => 'required|string',
+            'pendidikan_terakhir' => 'required|string',
+            'kewarganegaraan' => 'required|string'
         ]);
 
         $this->pendudukService->store($validated);
@@ -64,6 +70,12 @@ class PendudukController extends Controller
             'rw' => 'required|string|max:3',
             'agama' => 'required|string',
             'pekerjaan' => 'required|string',
+            'no_kk' => 'required|string',
+            'goldar' => 'required|string',
+            'hub_keluarga' => 'required|string',
+            'status_perkawinan' => 'required|string',
+            'pendidikan_terakhir' => 'required|string',
+            'kewarganegaraan' => 'required|string'
         ]);
 
         $this->pendudukService->update($penduduk, $validated);
