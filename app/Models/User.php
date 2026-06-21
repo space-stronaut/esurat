@@ -34,6 +34,7 @@ class User extends Authenticatable
     }
 
     // Helper methods untuk cek role
+    public function penduduk() { return $this->belongsTo(Penduduk::class, 'nik', 'nik'); }
     public function isSuperAdmin() { return $this->role === 'super_admin'; }
     public function isAdmin() { return $this->role === 'admin' || $this->role === 'super_admin'; }
     public function isUser() { return $this->role === 'user'; }

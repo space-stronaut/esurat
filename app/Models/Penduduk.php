@@ -27,4 +27,6 @@ class Penduduk extends Model
         'pendidikan_terakhir',
         'kewarganegaraan'
     ];
+
+    public function user() { return $this->belongsTo(User::class, 'nik', 'nik'); }
 }

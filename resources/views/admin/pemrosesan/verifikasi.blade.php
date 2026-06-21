@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Wizard Verifikasi: {{ $pemrosesan->template->nama_surat }}</h2>
     </x-slot>
-
+{{-- {{ $pemrosesan->ditujukan }} --}}
     <div class="py-12" x-data="{ 
         step: 1, 
         checks: [], 
@@ -28,7 +28,18 @@
                             <tr class="border-b"><td class="py-3 px-4 bg-gray-50 w-1/3 font-bold">Nama Lengkap</td><td class="py-3 px-4">{{ $pemrosesan->penduduk->nama_lengkap }}</td></tr>
                             <tr class="border-b"><td class="py-3 px-4 bg-gray-50 font-bold">NIK</td><td class="py-3 px-4">{{ $pemrosesan->penduduk->nik }}</td></tr>
                             <tr><td class="py-3 px-4 bg-gray-50 font-bold">Jalur Pengajuan</td><td class="py-3 px-4 uppercase">{{ $pemrosesan->jenis_pengajuan }}</td></tr>
+                            <tr><td class="py-3 px-4 bg-gray-50 font-bold">NO KK</td><td class="py-3 px-4 uppercase">{{ $pemrosesan->penduduk->no_kk }}</td></tr>
                         </table>
+
+                        @if ($pemrosesan->ditujukan_id != $pemrosesan->penduduk_id)
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">Ditujukan Untuk</h3>
+                            <table class="w-full text-sm mb-6 border">
+                                <tr class="border-b"><td class="py-3 px-4 bg-gray-50 w-1/3 font-bold">Nama Lengkap</td><td class="py-3 px-4">{{ $pemrosesan->ditujukan->nama_lengkap }}</td></tr>
+                                <tr class="border-b"><td class="py-3 px-4 bg-gray-50 font-bold">NIK</td><td class="py-3 px-4">{{ $pemrosesan->ditujukan->nik }}</td></tr>
+                                <tr><td class="py-3 px-4 bg-gray-50 font-bold">Hubungan Keluarga</td><td class="py-3 px-4 uppercase">{{ $pemrosesan->ditujukan->hub_keluarga }}</td></tr>
+                            </table>
+                            
+                        @endif
                         <div class="flex justify-end"><button type="button" @click="step = 2" class="bg-indigo-600 text-white px-5 py-2 rounded font-bold">Lanjut: Detail Data &raquo;</button></div>
                     </div>
 
@@ -51,11 +62,18 @@
                         @if($pemrosesan->isian_dinamis)
                             <div class="grid grid-cols-1 gap-4 text-sm mb-6">
                                 @foreach($pemrosesan->isian_dinamis as $k => $v)
-                                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
-                                        <span class="block text-xs font-bold text-blue-800 uppercase">{{ str_replace('_', ' ', $k) }}</span>
-                                        <span class="font-medium">{{ $v }}</span>
-                                    </div>
-                                @endforeach
+                                <div
+                                    class="bg-blue-50 p-3 rounded border border-blue-100"
+                                    @if(str_contains($k, 'statis.'))
+                                        style="display: none;"
+                                    @endif
+                                >
+                                    <span class="block text-xs font-bold text-blue-800 uppercase">
+                                        {{ str_replace('_', ' ', $k) }}
+                                    </span>
+                                    <span class="font-medium">{{ $v }}</span>
+                                </div>
+                            @endforeach
                             </div>
                         @else
                             <p class="text-gray-500 italic mb-6">Tidak ada isian tambahan dari warga.</p>

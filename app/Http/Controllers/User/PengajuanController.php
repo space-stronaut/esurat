@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Penduduk;
 use App\Models\PengajuanSurat;
 use App\Models\SuratTemplate;
 use App\Services\PengajuanService;
@@ -32,8 +33,12 @@ class PengajuanController extends Controller
 
     public function create()
     {
+        $keluargas = Penduduk::where('no_kk', Auth::user()->penduduk->no_kk)->get();
         $templates = SuratTemplate::all();
-        return view('user.pengajuan.create', compact('templates'));
+
+        // dd($keluargas);
+        // $keluargas = Pen
+        return view('user.pengajuan.create', compact('templates', 'keluargas'));
     }
 
     public function store(Request $request)

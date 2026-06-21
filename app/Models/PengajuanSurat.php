@@ -12,7 +12,7 @@ class PengajuanSurat extends Model
     protected $fillable = [
         'penduduk_id', 'surat_template_id', 'user_id', 'jenis_pengajuan',
         'isian_dinamis', 'lampiran_syarat', 'status', 'nomor_surat', 'file_hasil',
-        'tanggal_surat', 'link_gdrive', 'catatan_koreksi' // <--- Tambahan Revisi
+        'tanggal_surat', 'link_gdrive', 'catatan_koreksi' , 'ditujukan_id'// <--- Tambahan Revisi
     ];
 
     protected $casts = [
@@ -23,4 +23,5 @@ class PengajuanSurat extends Model
     public function penduduk() { return $this->belongsTo(Penduduk::class); }
     public function template() { return $this->belongsTo(SuratTemplate::class, 'surat_template_id'); }
     public function user() { return $this->belongsTo(User::class); }
+    public function ditujukan() { return $this->belongsTo(Penduduk::class, 'ditujukan_id', 'id'); }
 }

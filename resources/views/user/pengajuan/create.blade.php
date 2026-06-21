@@ -53,6 +53,18 @@
     </template>
 </div>
 
+                        
+
+                        <h3 class="font-bold text-lg text-gray-800 border-b mb-4 pb-2 mt-6">Ditujukan Untuk</h3>
+                        <div class="mb-4 p-4 border border-gray-200 rounded-md bg-gray-50">
+                            <select name="ditujukan_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($keluargas as $item)
+                                        <option value="{{$item->id}}">{{ $item->hub_keluarga == "Kepala Keluarga" ? "Pribadi" : $item->hub_keluarga }} - {{$item->nama_lengkap}}</option>
+                                    @endforeach
+                                </select>
+                        </div>
+
                         <div x-show="templateData?.syarat_dokumen?.length > 0">
                             <h3 class="font-bold text-lg text-gray-800 border-b mb-4 pb-2 mt-6">Persyaratan Lampiran</h3>
                             <input type="hidden" name="syarat_dokumen_keys" :value="JSON.stringify(templateData?.syarat_dokumen)">

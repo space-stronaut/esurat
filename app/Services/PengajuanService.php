@@ -61,6 +61,7 @@ class PengajuanService
             'isian_dinamis' => $isianDinamis,
             'lampiran_syarat' => $lampiran,
             'status' => 'pengajuan_baru',
+            'ditujukan_id' => $request->ditujukan_id
         ]);
     }
 

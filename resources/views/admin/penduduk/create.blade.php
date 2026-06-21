@@ -56,7 +56,17 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Agama</label>
-                                <input type="text" name="agama" value="{{ old('agama') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Islam">
+                                {{-- <input type="text" name="agama" value="{{ old('agama') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Islam"> --}}
+                                <input list="list-agama" name="agama" value="{{ old('agama') }}" 
+       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" 
+       required placeholder="Ketik untuk mencari...">
+       <datalist id="list-agama">
+        <option value="Islam">Islam</option>
+        <option value="Protestan">Protestan</option>
+        <option value="Khatolik">Khatolik</option>
+        <option value="Budha">Budha</option>
+        <option value="Hindu">Hindu</option>
+       </datalist>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Alamat Lengkap</label>
@@ -72,7 +82,101 @@
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Pekerjaan</label>
-                                <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required placeholder="Contoh: Karyawan Swasta">
+                                <input list="list-pekerjaan" name="pekerjaan" value="{{ old('pekerjaan') }}" 
+       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" 
+       required placeholder="Ketik untuk mencari...">
+
+<datalist id="list-pekerjaan">
+    <option value="Belum/Tidak Bekerja">
+    <option value="Mengurus Rumah Tangga">
+    <option value="Pelajar/Mahasiswa">
+    <option value="Pensiunan">
+    <option value="Pegawai Negeri Sipil (PNS)">
+    <option value="Tentara Nasional Indonesia (TNI)">
+    <option value="Kepolisian RI (POLRI)">
+    <option value="Karyawan Swasta">
+    <option value="Karyawan BUMN">
+    <option value="Karyawan BUMD">
+    <option value="Buruh Harian Lepas">
+    <option value="Buruh Tani/Perkebunan">
+    <option value="Buruh Nelayan/Perikanan">
+    <option value="Buruh Peternakan">
+    <option value="Pembantu Rumah Tangga">
+    <option value="Tukang Cukur">
+    <option value="Tukang Listrik">
+    <option value="Tukang Batu">
+    <option value="Tukang Kayu">
+    <option value="Tukang Sol Sepatu">
+    <option value="Tukang Las/Pandai Besi">
+    <option value="Tukang Jahit">
+    <option value="Tukang Gigi">
+    <option value="Penata Rias">
+    <option value="Penata Busana">
+    <option value="Penata Rambut">
+    <option value="Mekanik">
+    <option value="Seniman">
+    <option value="Wartawan">
+    <option value="Olahragawan">
+    <option value="Dokter">
+    <option value="Bidan">
+    <option value="Perawat">
+    <option value="Apoteker">
+    <option value="Psikiater/Psikolog">
+    <option value="Penyiar Televisi">
+    <option value="Penyiar Radio">
+    <option value="Promotor">
+    <option value="Filmografi/Sutradara">
+    <option value="Fotografer">
+    <option value="Desainer">
+    <option value="Arsitek">
+    <option value="Akuntan">
+    <option value="Konsultan">
+    <option value="Notaris">
+    <option value="Pengacara">
+    <option value="Penilai">
+    <option value="Juru Sita">
+    <option value="Aktuaris">
+    <option value="Kurator">
+    <option value="Jurnalis">
+    <option value="Karyawan Honorer">
+    <option value="Wakil Presiden">
+    <option value="Anggota DPR-RI">
+    <option value="Anggota DPD">
+    <option value="Anggota BPK">
+    <option value="Anggota Mahkamah Konstitusi">
+    <option value="Anggota Kabinet/Menteri">
+    <option value="Duta Besar">
+    <option value="Gubernur">
+    <option value="Wakil Gubernur">
+    <option value="Bupati">
+    <option value="Wakil Bupati">
+    <option value="Walikota">
+    <option value="Wakil Walikota">
+    <option value="Anggota DPRD Provinsi">
+    <option value="Anggota DPRD Kabupaten/Kota">
+    <option value="Dosen">
+    <option value="Guru">
+    <option value="Pilot">
+    <option value="Pramugari/Pramugara">
+    <option value="Navigator">
+    <option value="Masinis">
+    <option value="Nakhoda">
+    <option value="Masinis Kapal">
+    <option value="Pilot Pesawat Tempur">
+    <option value="Kepala Desa">
+    <option value="Perangkat Desa">
+    <option value="Anggota BPD">
+    <option value="Pendeta">
+    <option value="Pastor">
+    <option value="Ustadz/Mubaligh">
+    <option value="Biksu">
+    <option value="Monik">
+    <option value="Penginjil">
+    <option value="Penatua">
+    <option value="Syamas">
+    <option value="Wiraswasta">
+    <option value="Lainnya">
+</datalist>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Golongan Darah</label>
