@@ -32,7 +32,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">NO KK</label>
-                                <input type="text" name="nik" value="{{ old('no_kk') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required maxlength="16" placeholder="Wajib 16 Digit">
+                                <input type="text" name="no_kk" value="{{ old('no_kk') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" required maxlength="16" placeholder="Wajib 16 Digit">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>

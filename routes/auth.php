@@ -17,6 +17,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
+    Route::get('check-nik/{nik}', [RegisteredUserController::class, 'checkNik'])
+        ->name('register.check-nik');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

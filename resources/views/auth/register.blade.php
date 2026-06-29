@@ -18,6 +18,7 @@
             <x-input-label for="nik" :value="__('NIK (Nomor Induk Kependudukan)')" />
             <x-text-input id="nik" class="block mt-1 w-full" type="text" name="nik" :value="old('nik')" required autofocus maxlength="16" placeholder="Masukkan 16 Digit NIK" />
             <x-input-error :messages="$errors->get('nik')" class="mt-2" />
+            <div id="nik-error-custom" class="text-sm text-red-600 mt-2 hidden"></div>
         </div>
 
         <div class="mt-4">
@@ -61,6 +62,19 @@
                             type="password"
                             name="password_confirmation" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <div id="password-match-indicator" class="text-sm mt-2 hidden"></div>
+        </div>
+
+        <div class="mt-4 flex items-start">
+            <div class="flex items-center h-5">
+                <input id="terms" name="terms" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded cursor-pointer" {{ old('terms') ? 'checked' : '' }}>
+            </div>
+            <div class="ml-3 text-sm">
+                <label for="terms" class="font-medium text-gray-700 cursor-pointer select-none">
+                    Saya menyatakan bahwa seluruh data yang diinputkan adalah benar dan dapat dipertanggungjawabkan di kemudian hari.
+                </label>
+                <x-input-error :messages="$errors->get('terms')" class="mt-1" />
+            </div>
         </div>
 
         <div class="flex items-center justify-between mt-8">
@@ -68,9 +82,148 @@
                 {{ __('Sudah punya akun? Login') }}
             </a>
 
-            <x-primary-button class="ml-4 bg-indigo-600 hover:bg-indigo-700 px-6 py-2.5">
+            <x-primary-button id="submit_btn" class="ml-4 bg-indigo-600 hover:bg-indigo-700 px-6 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 {{ __('Daftar Sekarang') }}
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const termsCheckbox = document.getElementById('terms');
+            const submitBtn = document.getElementById('submit_btn');
+            const nikInput = document.getElementById('nik');
+            const nameInput = document.getElementById('name');
+            const nikErrorCustom = document.getElementById('nik-error-custom');
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmInput = document.getElementById('password_confirmation');
+            const passwordMatchIndicator = document.getElementById('password-match-indicator');
+
+            let isNikValid = false;
+
+            // Make name input readonly by default on load if it's empty
+            if (!nameInput.value) {
+                nameInput.setAttribute('readonly', 'readonly');
+                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            } else {
+                // If it already has a value (e.g. old() value after validation error), keep it readonly
+                nameInput.setAttribute('readonly', 'readonly');
+                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                isNikValid = true;
+            }
+
+            function toggleSubmitBtn() {
+                const pass = passwordInput.value;
+                const confirmPass = passwordConfirmInput.value;
+                const passwordsMatch = pass.length > 0 && pass === confirmPass;
+
+                if (isNikValid && termsCheckbox.checked && passwordsMatch) {
+                    submitBtn.removeAttribute('disabled');
+                } else {
+                    submitBtn.setAttribute('disabled', 'disabled');
+                }
+            }
+
+            function validatePasswordMatch() {
+                const pass = passwordInput.value;
+                const confirmPass = passwordConfirmInput.value;
+
+                if (confirmPass.length === 0) {
+                    passwordMatchIndicator.classList.add('hidden');
+                    passwordMatchIndicator.textContent = '';
+                } else if (pass === confirmPass) {
+                    passwordMatchIndicator.textContent = 'Password cocok';
+                    passwordMatchIndicator.className = 'text-sm mt-2 text-green-600 font-semibold block';
+                } else {
+                    passwordMatchIndicator.textContent = 'Password konfirmasi tidak cocok.';
+                    passwordMatchIndicator.className = 'text-sm mt-2 text-red-600 font-semibold block';
+                }
+
+                toggleSubmitBtn();
+            }
+
+            async function checkNikRealtime() {
+                const nik = nikInput.value.trim();
+                
+                if (nik.length === 16) {
+                    try {
+                        const response = await fetch(`/check-nik/${nik}`);
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            nameInput.value = data.nama_lengkap;
+                            nameInput.setAttribute('readonly', 'readonly');
+                            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                            
+                            nikErrorCustom.classList.add('hidden');
+                            nikErrorCustom.textContent = '';
+                            isNikValid = true;
+                        } else {
+                            nameInput.value = '';
+                            nameInput.setAttribute('readonly', 'readonly');
+                            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                            
+                            nikErrorCustom.textContent = data.message || "Data NIK Anda belum terdaftar di sistem. Silakan hubungi Admin untuk mendaftarkan data penduduk Anda terlebih dahulu.";
+                            nikErrorCustom.classList.remove('hidden');
+                            isNikValid = false;
+                        }
+                    } catch (error) {
+                        console.error('Error checking NIK:', error);
+                    }
+                } else {
+                    nameInput.value = '';
+                    isNikValid = false;
+                    
+                    if (nik.length > 0) {
+                        nikErrorCustom.textContent = 'NIK harus terdiri dari 16 digit.';
+                        nikErrorCustom.classList.remove('hidden');
+                    } else {
+                        nikErrorCustom.classList.add('hidden');
+                        nikErrorCustom.textContent = '';
+                    }
+                }
+                
+                toggleSubmitBtn();
+            }
+
+            // Run initial check if NIK on load is already 16 characters
+            if (nikInput.value.trim().length === 16) {
+                checkNikRealtime();
+            } else {
+                toggleSubmitBtn();
+            }
+
+            // Listen to NIK inputs (typing)
+            nikInput.addEventListener('input', function() {
+                if (nikInput.value.trim().length === 16) {
+                    checkNikRealtime();
+                } else {
+                    isNikValid = false;
+                    nameInput.value = '';
+                    toggleSubmitBtn();
+                    nikErrorCustom.classList.add('hidden');
+                }
+            });
+
+            // Listen to blur to enforce 16 digit warning
+            nikInput.addEventListener('blur', function() {
+                const nik = nikInput.value.trim();
+                if (nik.length > 0 && nik.length !== 16) {
+                    nikErrorCustom.textContent = 'NIK harus terdiri dari 16 digit.';
+                    nikErrorCustom.classList.remove('hidden');
+                    isNikValid = false;
+                    toggleSubmitBtn();
+                }
+            });
+
+            // Listen for password input changes
+            passwordInput.addEventListener('input', validatePasswordMatch);
+            passwordInput.addEventListener('blur', validatePasswordMatch);
+            passwordConfirmInput.addEventListener('input', validatePasswordMatch);
+            passwordConfirmInput.addEventListener('blur', validatePasswordMatch);
+
+            // Listen for terms checkbox changes
+            termsCheckbox.addEventListener('change', toggleSubmitBtn);
+        });
+    </script>
 </x-guest-layout>

@@ -30,12 +30,17 @@ class RegisteredUserController extends Controller
     {
         // 1. Validasi Input + File Foto
         $request->validate([
-            'nik' => ['required', 'string', 'size:16', 'unique:'.User::class],
+            'nik' => ['required', 'string', 'size:16', 'unique:'.User::class, 'exists:penduduks,nik'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'foto_ktp' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'foto_selfie' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'terms' => ['required', 'accepted'],
+        ], [
+            'nik.exists' => 'Data NIK Anda belum terdaftar di sistem. Silakan hubungi Admin untuk mendaftarkan data penduduk Anda terlebih dahulu.',
+            'terms.accepted' => 'Anda harus menyetujui syarat & ketentuan untuk melanjutkan pendaftaran.',
+            'terms.required' => 'Persetujuan syarat & ketentuan wajib dicentang.',
         ]);
 
         // 2. Simpan File ke Storage
@@ -60,5 +65,25 @@ class RegisteredUserController extends Controller
 
         // 4. Redirect ke halaman Login dengan pesan sukses
         return redirect()->route('login')->with('status', 'Registrasi berhasil! Akun Anda berstatus PENDING. Silakan tunggu Admin memvalidasi berkas Anda sebelum dapat Login.');
+    }
+
+    /**
+     * Check if NIK exists in Master Penduduk database (real-time endpoint).
+     */
+    public function checkNik($nik)
+    {
+        $penduduk = \App\Models\Penduduk::where('nik', $nik)->first();
+
+        if ($penduduk) {
+            return response()->json([
+                'success' => true,
+                'nama_lengkap' => $penduduk->nama_lengkap,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data NIK Anda belum terdaftar di sistem. Silakan hubungi Admin untuk mendaftarkan data penduduk Anda terlebih dahulu.'
+        ]);
     }
 }
