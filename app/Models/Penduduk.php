@@ -25,7 +25,9 @@ class Penduduk extends Model
         'hub_keluarga',
         'status_perkawinan',
         'pendidikan_terakhir',
-        'kewarganegaraan'
+        'kewarganegaraan',
+        'no_hp',
+        'email'
     ];
 
     public function user() { return $this->belongsTo(User::class, 'nik', 'nik'); }

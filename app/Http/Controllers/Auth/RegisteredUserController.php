@@ -34,8 +34,8 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'foto_ktp' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-            'foto_selfie' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'foto_ktp' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:300'],
+            'foto_selfie' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:300'],
             'terms' => ['required', 'accepted'],
         ], [
             'nik.exists' => 'Data NIK Anda belum terdaftar di sistem. Silakan hubungi Admin untuk mendaftarkan data penduduk Anda terlebih dahulu.',

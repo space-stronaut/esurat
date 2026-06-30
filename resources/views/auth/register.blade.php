@@ -16,7 +16,7 @@
 
         <div>
             <x-input-label for="nik" :value="__('NIK (Nomor Induk Kependudukan)')" />
-            <x-text-input id="nik" class="block mt-1 w-full" type="text" name="nik" :value="old('nik')" required autofocus maxlength="16" placeholder="Masukkan 16 Digit NIK" />
+            <x-text-input id="nik" class="block mt-1 w-full" type="text" name="nik" :value="old('nik')" required autofocus maxlength="16" placeholder="Masukkan 16 Digit NIK" oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric" pattern="[0-9]*" />
             <x-input-error :messages="$errors->get('nik')" class="mt-2" />
             <div id="nik-error-custom" class="text-sm text-red-600 mt-2 hidden"></div>
         </div>
@@ -36,15 +36,17 @@
         <div class="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
             <x-input-label for="foto_ktp" :value="__('Upload Foto KTP Asli')" class="font-bold text-indigo-700" />
             <input type="file" id="foto_ktp" name="foto_ktp" required accept=".jpg,.jpeg,.png" class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
-            <p class="text-xs text-gray-500 mt-1">Format: JPG, JPEG, PNG (Maksimal 2MB).</p>
+            <p class="text-xs text-gray-500 mt-1">Format: JPG, JPEG, PNG (Maksimal 300KB).</p>
             <x-input-error :messages="$errors->get('foto_ktp')" class="mt-2" />
+            <div id="foto_ktp-error-custom" class="text-sm text-red-600 mt-2 hidden"></div>
         </div>
 
         <div class="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
             <x-input-label for="foto_selfie" :value="__('Upload Foto Selfie Memegang KTP')" class="font-bold text-indigo-700" />
             <input type="file" id="foto_selfie" name="foto_selfie" required accept=".jpg,.jpeg,.png" class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
-            <p class="text-xs text-gray-500 mt-1">Pastikan wajah dan tulisan pada KTP terlihat jelas.</p>
+            <p class="text-xs text-gray-500 mt-1">Pastikan wajah dan tulisan pada KTP terlihat jelas (Maksimal 300KB).</p>
             <x-input-error :messages="$errors->get('foto_selfie')" class="mt-2" />
+            <div id="foto_selfie-error-custom" class="text-sm text-red-600 mt-2 hidden"></div>
         </div>
 
         <div class="mt-4">

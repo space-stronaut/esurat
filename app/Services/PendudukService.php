@@ -6,11 +6,20 @@ use App\Models\Penduduk;
 class PendudukService
 {
     /**
-     * Mengambil semua data penduduk dengan paginasi
+     * Mengambil semua data penduduk dengan paginasi dan pencarian
      */
-    public function getAllPaginated($perPage = 10)
+    public function getAllPaginated($perPage = 10, $search = null)
     {
-        return Penduduk::latest()->paginate($perPage);
+        $query = Penduduk::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nik', 'like', "%{$search}%")
+                  ->orWhere('nama_lengkap', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**
